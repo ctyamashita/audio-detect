@@ -25,9 +25,12 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       dbMeter?.disconnect()
       dbMeter = new DecibelMeter
       const sources = await dbMeter.sources
-      const sourcesNames = sources.map((src,index)=>`<p>[${index}] ${src.label}</p>`).join('')
-      document.body.insertAdjacentHTML('beforeend', '<h3>Sources</h3>' + sourcesNames)
-      dbMeter.listenTo(2, (dB, percent, value) => {
+      const sourcesNames = sources.map((src,index)=>src.label)
+      let bestSource = sourcesNames.indexOf('Speakerphone')
+      bestSource ||= 0
+      const sourcesNamesList = sources.map((src,index)=>`<p>[${index}] ${src.label}</p>`).join('')
+      document.body.insertAdjacentHTML('beforeend', '<h3>Sources</h3>' + sourcesNamesList)
+      dbMeter.listenTo(bestSource, (dB, percent, value) => {
         dbMeterData = { dB: dB, percent: percent, value: value }
       })
     
