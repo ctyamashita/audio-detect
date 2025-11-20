@@ -100,7 +100,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     intervalDisplay.innerHTML = intervalOfChecks + " <small>msec</small>"
     intervalInput.addEventListener('change', (e) => {
       intervalOfChecks = e.currentTarget.value
-      resetDbMeter()
+      dbMeter = resetDbMeter()
     })
     
     intervalInput.addEventListener('input', (e) => {
@@ -112,7 +112,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     const checkDisplay = document.getElementById('checkDisplay')
     checkInput.addEventListener('change', (e) => {
       delayCheck = e.currentTarget.value
-      resetDbMeter()
+      dbMeter = resetDbMeter()
     })
     
     checkInput.addEventListener('input', (e) => {
@@ -125,7 +125,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     const dBlimitDisplay = document.getElementById('dBlimitDisplay')
     dBlimitInput.addEventListener('change', (e) => {
       dBlimit = e.currentTarget.value
-      resetDbMeter()
+      dbMeter = resetDbMeter()
     })
     
     dBlimitInput.addEventListener('input', (e) => {
@@ -134,7 +134,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
     sourceInput.addEventListener('change', (e) => {
       sourceIndex = Number(e.currentTarget.value)
-      resetDbMeter()
+      dbMeter = resetDbMeter()
     })
   })
 }
