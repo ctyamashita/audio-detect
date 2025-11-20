@@ -21,31 +21,27 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     
     function resetDbMeter(dbMeter) {
       const checkTitle = document.getElementById('check-title')
-      checkTitle.innerText = `Latest collection (${delayCheck/ intervalOfChecks} checks every ${delayCheck/1000}s)`
+      checkTitle.innerHTML = `Latest collection <small>(${delayCheck/ intervalOfChecks} checks every ${delayCheck/1000}s)</small>`
       dbMeter?.disconnect()
       dbMeter = new DecibelMeter
       dbMeter.listenTo(0, (dB, percent, value) => {
-        dbMeterData = {
-          dB: dB,
-          percent: percent,
-          value: value
-        }
+        dbMeterData = { dB: dB, percent: percent, value: value }
       })
     
+      // clearing loops when disconnect
       dbMeter.on('disconnect', () => {
         clearInterval(intervalOfChecksLoop)
         clearInterval(delayCheckLoop)
       })
     
       dbMeter.on('connect', ()=>{
+        // collecting dB measurements
         intervalOfChecksLoop = setInterval(() => {
           const { dB, percent, value } = dbMeterData
           const dbDiff = Math.abs(Math.round(dB - prevDb))
           soundHistory.push(Math.abs(Math.round(dB)))
     
-          // dbMeterDisplay.innerHTML = `<p>dB: ${dB}</p>
-          //                             <p>percent: ${percent}</p>
-          //                             <p>value: ${value}</p>`
+          // for circle animation
           const size = Math.round(((dbDiff / height) + 1) * height)
           if (soundDetected) {
             realTime.setAttribute('data-height', size - 25)
@@ -56,14 +52,16 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             realTime.removeAttribute('style')
           }
           prevDb = dB
-        }, intervalOfChecks * 3);
-    
+        }, intervalOfChecks);
+        
+        // updating average
         delayCheckLoop = setInterval(() => {
           const pastFiveSec = soundHistory.slice(-1 * (delayCheck / intervalOfChecks))
           const dBAverage = pastFiveSec.reduce((a,b)=>a+b) / (delayCheck / intervalOfChecks)
           // soundDetected = dBAverage < 94.5
           soundDetected = dBAverage < dBlimit
     
+          // updating color
           if (soundDetected) {
             realTime.classList.remove('silent')
             realTime.classList.add('talking')
@@ -76,6 +74,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             bg.classList.add('silent')
           }
     
+          // adding bars
           visualDisplay.innerHTML = pastFiveSec.map(num=>`<div style="height:${num}%"></div>`).join('')
     
           const message = soundDetected ? `talking` : `silent`
@@ -87,7 +86,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     }
     
     let dbMeter = resetDbMeter()
-    
+    // update if interval input changes
     const intervalInput = document.getElementById('interval')
     const intervalDisplay = document.getElementById('intervalDisplay')
     intervalInput.addEventListener('change', (e)=>{
@@ -96,31 +95,30 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     })
     
     intervalInput.addEventListener('input', (e)=>{
-      intervalDisplay.innerHTML = e.currentTarget.value
+      intervalDisplay.innerHTML = e.currentTarget.value + " <small>msec</small>"
     })
-    
+    // update if check input changes
     const checkInput = document.getElementById('check')
     const checkDisplay = document.getElementById('checkDisplay')
     checkInput.addEventListener('change', (e)=>{
-      checkDisplay.innerHTML = e.currentTarget.value
       delayCheck = e.currentTarget.value
       dbMeter = resetDbMeter(dbMeter)
     })
     
     checkInput.addEventListener('input', (e)=>{
-      checkDisplay.innerHTML = e.currentTarget.value
+      checkDisplay.innerHTML = e.currentTarget.value + " <small>msec</small>"
     })
-    
+
+    // update if db limit input changes
     const dBlimitInput = document.getElementById('dBlimit')
     const dBlimitDisplay = document.getElementById('dBlimitDisplay')
     dBlimitInput.addEventListener('change', (e)=>{
-      dBlimitDisplay.innerHTML = e.currentTarget.value
       dBlimit = e.currentTarget.value
       dbMeter = resetDbMeter(dbMeter)
     })
     
     dBlimitInput.addEventListener('input', (e)=>{
-      dBlimitDisplay.innerHTML = e.currentTarget.value
+      dBlimitDisplay.innerHTML = e.currentTarget.value + " <small>dB</small>"
     })
   })
 }

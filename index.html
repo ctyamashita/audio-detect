@@ -20,21 +20,23 @@
       <div id="real-time"></div>
     </div>
     <h2 id="check-title">Check</h2>
-    <div id="display"></div>
+    <div id="display">
+      <p>No data</p>
+    </div>
     <div id="bg">
       <div id="db-meter"></div>
     </div>
-    <h2>Config</h2>
+    <h2>Settings</h2>
     <div class="input-container">
-      <label for="interval">Interval between collection (in msec):</label>
+      <label for="interval">Interval between checks:</label>
       <input type="range" name="interval" id="interval" min="100" max="1000" step="100" value="100">
-      <div id="intervalDisplay">100</div>
-      <label for="check">dB average check every (in msec):</label>
+      <div id="intervalDisplay">100 <small>msec</small></div>
+      <label for="check">Get dB average every:</label>
       <input type="range" name="check" id="check" min="1000" max="10000" step="1000" value="5000">
-      <div id="checkDisplay">5000</div>
+      <div id="checkDisplay">5000 <small>msec</small></div>
       <label for="dBlimit">dB limit (lower than value equals to silent):</label>
       <input type="range" name="dBlimit" id="dBlimit" min="40" max="100" step="1" value="90">
-      <div id="dBlimitDisplay">90</div>
+      <div id="dBlimitDisplay">90 <small>dB</small></div>
     </div>
   </div>
   <script src="decibel.js" type="module"></script>
