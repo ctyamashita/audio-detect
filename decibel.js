@@ -27,7 +27,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       const sources = await dbMeter.sources
       const sourcesNames = sources.map((src,index)=>`<p>[${index}] ${src.label}</p>`).join('')
       document.body.insertAdjacentHTML('beforeend', '<h3>Sources</h3>' + sourcesNames)
-      dbMeter.listenTo(0, (dB, percent, value) => {
+      dbMeter.listenTo(1, (dB, percent, value) => {
         dbMeterData = { dB: dB, percent: percent, value: value }
       })
     
