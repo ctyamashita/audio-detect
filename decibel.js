@@ -42,7 +42,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         intervalOfChecksLoop = setInterval(() => {
           const { dB } = dbMeterData
           const dbDiff = Math.abs(Math.round(dB - prevDb))
-          soundHistory.push(Math.abs(Math.round(dbDiff)))
+          soundHistory.push(Math.abs(Math.round(dB)))
     
           // for circle animation
           const size = Math.round(((dbDiff / height) + 1) * height)
