@@ -18,9 +18,13 @@ body {
   background-color: rgb(60, 60, 60);
 }
 
+body:has(select:open) {
+  filter: saturate(.3) sepia(.3);
+}
+
 *:not(small),
 input {
-  accent-color: var(--darkred);
+  accent-color: var(--text-color);
   color: var(--darkred);
 }
 
@@ -53,22 +57,7 @@ h2 {
   display: flex;
   align-items: end;
   height: 100px;
-  overflow: hidden;
-  border-radius: 12px;
-  background-color: var(--bg-display);
-}
-
-#display:has(> p:only-child) {
-  justify-content: center;
-  align-items: center;
-  background-color: var(--bg-display);
-}
-
-#display p {
-  color: var(--text-color);
-  text-align: center;
-  margin: 0;
-  padding: 0;
+  margin: 0 12px;
 }
 
 #display > div {
@@ -100,9 +89,12 @@ h2 {
 }
 
 .real-time-container,
-#display {
+.display-container {
   border: solid 4px var(--midred);
   box-shadow: inset 2px 2px 0 2px var(--text-color), inset 0 0 40px var(--text-color);
+  border-radius: 12px;
+  background-color: var(--bg-display);
+  overflow: hidden;
 }
 
 .real-time-container {
@@ -146,10 +138,16 @@ h2 {
 }
 
 #db-meter {
+  height: 1rem;
   display: flex;
   justify-content: space-around;
-  margin-top: .3em;
+  color: var(--text-color);
+  margin: 8px 0;
 }
+
+/* .display-container:has(#display > p:only-child) #db-meter {
+  display: none !important;
+} */
 
 .input-container {
   display: grid;
@@ -167,16 +165,46 @@ h2 {
   font-weight: 700;
 }
 
+select,
+::picker(select) {
+  appearance: base-select;
+}
+
 select {
+  /* appearance: none; */
   color: var(--text-color);
   font-family: 'Jersey 10', sans-serif;
   width: 100%;
-  padding: .5rem;
+  padding: .75rem 1rem;
   border: none;
   background-color: var(--bg-display);
-  border-right: solid .5rem var(--bg-display);
-  box-shadow: 0 0 0 2px var(--midred);
+  box-shadow: 0 0 0 2px var(--midred), inset 2px 2px 0 2px var(--text-color);
   border-radius: 8px;
+}
+
+select::picker-icon {
+  transform: scaleY(.7) translateY(10%);
+}
+
+select:open::picker-icon {
+  rotate: 180deg;
+}
+
+::picker(select) {
+  border-radius: 12px;
+  border: solid 4px white;
+  background-color: var(--bg-display);
+  box-shadow: inset 2px 2px 0 2px var(--text-color);
+  color: var(--text-color);
+}
+
+option {
+  color: var(--text-color);
+}
+
+option:checked {
+  background-color: var(--text-color);
+  color: var(--bg-display);
 }
 
 input[type="range"] {

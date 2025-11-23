@@ -78,7 +78,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           visualDisplay.innerHTML = pastFiveSec.map(num=>`<div style="height:${100 - num}%"></div>`).join('')
     
           // const message = soundDetected ? `talking` : `silent`
-          dbMeterDisplay.innerHTML = `average: ${dBAverage}dB`
+          dbMeterDisplay.innerHTML = `average: -${dBAverage}dB`
           // console.log(message, soundDetected, dBAverage)
         }, delayCheck);
       })
