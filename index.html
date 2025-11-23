@@ -10,16 +10,17 @@
   <script type="importmap">
     {
       "imports": {
-        "decibel-meter": "https://cdn.jsdelivr.net/npm/decibel-meter@2.0.0/+esm"
+        "decibel-meter": "https://cdn.jsdelivr.net/npm/decibel-meter@2.0.0/+esm",
+        "vad-web": "https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/+esm"
       }
     }
   </script>
-  <div>
-    <h2>Real Time</h2>
+  <div id="main">
+    <h2>Voice Detection</h2>
     <div class="real-time-container">
       <div id="real-time"></div>
     </div>
-    <h2 id="check-title">Check</h2>
+    <h2 id="check-title">Db meter</h2>
     <div id="display">
       <p>No data</p>
     </div>
@@ -28,15 +29,12 @@
     </div>
     <h2>Settings</h2>
     <div class="input-container">
-      <label for="interval">Interval between checks:</label>
+      <label for="interval">Check every:</label>
       <input type="range" name="interval" id="interval" min="100" max="1000" step="100">
       <div id="intervalDisplay">100 <small>msec</small></div>
-      <label for="check">Get dB average every:</label>
+      <label for="check">Average every:</label>
       <input type="range" name="check" id="check" min="1000" max="10000" step="1000">
       <div id="checkDisplay">5000 <small>msec</small></div>
-      <label for="dBlimit">dB limit (lower than value equals to silent):</label>
-      <input type="range" name="dBlimit" id="dBlimit" min="40" max="100" step="1">
-      <div id="dBlimitDisplay">90 <small>dB</small></div>
     </div>
     <h2>Sources</h2>
     <select name="source" id="source">

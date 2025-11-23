@@ -1,4 +1,5 @@
 import DecibelMeter from 'decibel-meter'
+import VAD from "vad-web"
 
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
   navigator.mediaDevices.getUserMedia({ audio: true }).then(async(stream)=>{
@@ -23,7 +24,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     
     function resetDbMeter(dbMeter) {
       const checkTitle = document.getElementById('check-title')
-      checkTitle.innerHTML = `Latest collection <small>(${delayCheck/ intervalOfChecks} checks every ${delayCheck/1000}s)</small>`
+      checkTitle.innerHTML = `Db Meter <small>(${delayCheck/ intervalOfChecks} checks every ${delayCheck/1000}s)</small>`
       dbMeter?.disconnect()
       dbMeter = new DecibelMeter
       dbMeter.listenTo(sourceIndex, (dB, percent, value) => {
@@ -46,13 +47,22 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           // for circle animation
           const size = Math.round(((dbDiff / height) + 1) * height)
           if (soundDetected) {
-            realTime.setAttribute('data-height', size - 25)
+            realTime.setAttribute('data-height', size - 10)
+            realTime.classList.remove('silent')
+            realTime.classList.add('talking')
+            bg.classList.remove('silent')
+            bg.classList.add('talking')
             setTimeout(() => {
               realTime.setAttribute('style', `height: ${size}px; width: ${size}px`)
             }, intervalOfChecks);
           } else {
             realTime.removeAttribute('style')
+            realTime.classList.remove('talking')
+            realTime.classList.add('silent')
+            bg.classList.remove('talking')
+            bg.classList.add('silent')
           }
+
           prevDb = dB
         }, intervalOfChecks);
         
@@ -61,27 +71,14 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           const pastFiveSec = soundHistory.slice(-1 * (delayCheck / intervalOfChecks))
           const dBAverage = pastFiveSec.reduce((a,b)=>a+b) / (delayCheck / intervalOfChecks)
           // soundDetected = dBAverage < 94.5
-          // console.log(dBAverage)
-          soundDetected = dBAverage < dBlimit
-    
-          // updating color
-          if (soundDetected) {
-            realTime.classList.remove('silent')
-            realTime.classList.add('talking')
-            bg.classList.remove('silent')
-            bg.classList.add('talking')
-          } else {
-            realTime.classList.remove('talking')
-            realTime.classList.add('silent')
-            bg.classList.remove('talking')
-            bg.classList.add('silent')
-          }
+          // console.log(dBAverage, soundDetected)
+          // soundDetected = dBAverage < dBlimit
     
           // adding bars
-          visualDisplay.innerHTML = pastFiveSec.map(num=>`<div style="height:${num}%"></div>`).join('')
+          visualDisplay.innerHTML = pastFiveSec.map(num=>`<div style="height:${100 - num}%"></div>`).join('')
     
-          const message = soundDetected ? `talking` : `silent`
-          dbMeterDisplay.innerHTML = `average: ${dBAverage}dB [${message}]`
+          // const message = soundDetected ? `talking` : `silent`
+          dbMeterDisplay.innerHTML = `average: ${dBAverage}dB`
           // console.log(message, soundDetected, dBAverage)
         }, delayCheck);
       })
@@ -119,22 +116,31 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
       checkDisplay.innerHTML = e.currentTarget.value + " <small>msec</small>"
     })
 
-    // update if db limit input changes
-    const dBlimitInput = document.getElementById('dBlimit')
-    dBlimitInput.value = dBlimit
-    const dBlimitDisplay = document.getElementById('dBlimitDisplay')
-    dBlimitInput.addEventListener('change', (e) => {
-      dBlimit = e.currentTarget.value
-      dbMeter = resetDbMeter()
-    })
-    
-    dBlimitInput.addEventListener('input', (e) => {
-      dBlimitDisplay.innerHTML = e.currentTarget.value + " <small>dB</small>"
-    })
-
     sourceInput.addEventListener('change', (e) => {
       sourceIndex = Number(e.currentTarget.value)
       dbMeter = resetDbMeter()
     })
+
+    const myvad = await VAD.MicVAD.new({
+      onSpeechRealStart: () => {
+        console.log('talking')
+        soundDetected = true
+      },
+      onSpeechEnd: (audio) => {
+        // do something with `audio` (Float32Array of audio samples at sample rate 16000)...
+        console.log('stopped talking')
+        soundDetected = false
+        //   if (!soundDetected) {
+        //     console.log('silent for 5 sec')
+        //   }
+        // }, 3000);
+      },
+      onnxWASMBasePath:
+        "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.22.0/dist/",
+      baseAssetPath:
+        "https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.29/dist/",
+    })
+
+    myvad.start()
   })
 }
